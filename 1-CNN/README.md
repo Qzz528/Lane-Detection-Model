@@ -173,7 +173,7 @@ if __name__ == '__main__':
 
 该模型的实际结构图为：
 
-![segmodel2.PNG](auxiliary/segmodel2.PNG)
+![segmodel2.PNG](auxiliary/segmodel2.png)
 
 该模型即为不对称情况，在由中间数据到输出数据，恢复数据尺寸过程中，只进行了2次反卷积，之后直接使用插值，由于插值方法不需要训练，该方法可以减少模型参数。
 
