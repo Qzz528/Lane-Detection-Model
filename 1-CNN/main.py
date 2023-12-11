@@ -27,13 +27,13 @@ except: #否则从头训练
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 model = model.to(device)
 
-
+#%%
 '训练模型'
 data_path = r"F:/CULane" #TODO：请修改为数据集的实际地址
 #超参数
 epoch = 15 #训练轮数
 learning_rate = 1e-3 #学习率
-batch_size = 16 #批尺寸 
+batch_size = 32 #批尺寸 
 
 #创建训练集和测试集    
 trainset = CULaneData(data_path,'train')
@@ -52,7 +52,7 @@ for i in range(epoch):#每轮
     #训练
     model.train() 
     loss_train = 0 #训练总损失
-    metric_train = np.array([0,0,0,0]) #训练总统计 #分别为TP,FN,TN,FP
+    metric_train = np.array([0,0,0]) #训练总统计 #分别为TP,FN,FP
     trainbar =  tqdm(trainloader,desc = f"[Train Epoch {i}]") #设置进度条
     for j,(img,seg) in enumerate(trainbar):#取训练数据
         img = img.to(device) #(bs,3,h,w)
@@ -101,10 +101,9 @@ for i in range(epoch):#每轮
         ##############
 
     tLoss = loss_train/len(trainloader.dataset) #每轮结束打印该轮总损失
-    tAcc,tPer,tRec,tF1 = get_score(*metric_train) #每轮结束打印该轮总指标
+    tPer,tRec,tF1 = get_score(*metric_train) #每轮结束打印该轮总指标
     print("[Train SUMMARY]",
           "Loss:%.5f,"%(tLoss),
-          "Accuracy:%.2f%%,"%(tAcc*100),
           "Percision:%.2f%%,"%(tPer*100),
           "Recall:%.2f%%,"%(tRec*100),
           "F1Score:%.2f%%"%(tF1*100)) 
@@ -112,7 +111,7 @@ for i in range(epoch):#每轮
     #验证
     model.eval()
     loss_val = 0 #验证总损失
-    metric_val = np.array([0,0,0,0]) #验证总统计结果 #分别为TP,FN,TN,FP
+    metric_val = np.array([0,0,0]) #验证总统计结果 #分别为TP,FN,FP
     valbar =  tqdm(valloader,desc = f"[Eval Epoch {i}]") #设置进度条
     for j,(img,seg) in enumerate(valbar):#取验证数据
         img = img.to(device) #(bs,3,h,w)
@@ -133,10 +132,9 @@ for i in range(epoch):#每轮
         valbar.set_postfix({'loss':loss.item()}) #进度条显示该批的实时损失
 
     tLoss = loss_val/len(trainloader.dataset) #每轮结束打印该轮总损失
-    tAcc,tPer,tRec,tF1 = get_score(*metric_val) #每轮结束打印该轮总指标
+    tPer,tRec,tF1 = get_score(*metric_val) #每轮结束打印该轮总指标
     print("[Eval SUMMARY]",
           "Loss:%.5f,"%(tLoss),
-          "Accuracy:%.2f%%,"%(tAcc*100),
           "Percision:%.2f%%,"%(tPer*100),
           "Recall:%.2f%%,"%(tRec*100),
           "F1Score:%.2f%%\n"%(tF1*100))  
@@ -145,6 +143,7 @@ for i in range(epoch):#每轮
     torch.save(model.state_dict(), model_path) 
 
 
+#%%
 '调用模型' 
 #读取一张图片 
 image_path = "sample.jpg" #TODO:使用时修改为要进行车道检测的实际图片地址
