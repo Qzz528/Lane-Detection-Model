@@ -23,13 +23,13 @@ print('[Import Complete]')
 
 #地址
 model_path= r"weights/FCN_small.pt" #TODO：请修改为进行模型存储的实际地址
-data_path = r"F:/CULane" #TODO：请修改为数据集的实际地址
+data_path = r"examples/CULane_demo" #TODO：请修改为数据集的实际地址
 
 #参数
 n_lanes = 4 #车道线类别数
 epoch = 10 #训练轮数
 learning_rate = 3e-4 #学习率
-batch_size = 16 #批尺寸 
+batch_size = 4 #批尺寸 
 data_size = (288,800) #模型对应的输入图片尺寸，分割结果尺寸（据此生成训练数据）
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')#设置训练设备
 
